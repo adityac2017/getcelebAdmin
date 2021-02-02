@@ -1,0 +1,20 @@
+.custom-search{
+  max-width: 300px;
+  margin-right: 10px;
+}
+.custom-search, .btn{
+  min-height: 46px;
+}
+@media (max-width: 767px) {
+  .display-sm-block{
+    display: block !important;
+  }
+  .custom-search{
+    max-width: 100%;
+    margin-right: 0px;
+    margin-bottom: 10px;
+  }
+  .btn{
+    width: 100%;
+  }
+}

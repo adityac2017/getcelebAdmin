@@ -1,0 +1,88 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-danger">
+              <div class="row">
+                <div class="col-md-9">
+                  <h2 class="card-title ">All Users</h2>
+                </div>
+                <div class="col-md-3">
+                    <input type="text"  placeholder="Search Email.." [(ngModel)]="getUserBody.searchText" class="form-control" (keyup)="search()">
+                  </div>
+                </div>
+              </div>
+         
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead class=" text-primary">
+                  <th>#</th>
+                  <th>User Id</th>
+                  <th>Email</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Profile Image</th>
+                  <th>Created At</th>
+                  <th>Action</th>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let val of getList; let i = index">
+                    <td>{{i + serialNumber + 1}}</td>
+                    <td>{{val._id}}</td>
+                    <td>{{val.userEmail}}</td>
+                    <td>{{val.userName}}</td>
+                    <td>{{val.userPhone}}</td>
+                    <td>
+                        <a href="javascript:void(0)"  (click)="selectImage(val.profileImage,1)"><img *ngIf="val.isFullUrl != 0" src="{{val.profileImage}}" height="80px" width="80px" class=""></a>
+                      <a href="javascript:void(0)"  (click)="selectImage(val.profileImage,2)"><img *ngIf="val.profileImage && val.isFullUrl == '0'" src="{{imageUrl}}{{val.profileImage}}"  height="80px" width="80px" class=""></a>
+                     <img *ngIf="!val.profileImage && val.isFullUrl == '0'" src="assets/img/default.png" height="80px" width="80px" class="">
+                    </td>
+                    <td>{{val.createdAt | date:'yyyy-MM-dd hh:mm a'}}</td>
+                 <td>  <button *ngIf="val.isBlocked == 0"  class="btn btn-danger"  onclick="return confirm('Are you sure you want to block this user ?');" (click)="blockUnblocks(val._id,i,1)"><i class="material-icons">Unblock</i></button>
+                  <button *ngIf="val.isBlocked == 1"  class="btn btn-danger"  onclick="return confirm('Are you sure you want to Unblock this user ?');" (click)="blockUnblocks(val._id,i,0)"><i class="material-icons">Block</i></button></td>
+                  </tr>  
+                  </tbody>
+                </table>
+              
+                <pagination *ngIf="getList.length" [boundaryLinks]="showBoundaryLinks" [totalItems]="totalCount" [(ngModel)]="bigCurrentPage"  [maxSize]="maxSize"  (pageChanged)="pageChanged($event)"></pagination>
+                   <div *ngIf="!getList.length" class="text-center">
+                  <h4>No Records found.</h4>
+                </div>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="imageModel" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Profile Image</h4>
+        </div>
+        <div class="modal-body">
+         <img height="100%" width="100%" src="{{profileImage}}">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
+
+  

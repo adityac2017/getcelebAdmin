@@ -1,0 +1,103 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <div class="row d-flex display-sm-block align-items-center justify-content-between">
+              <span>
+                <h2 class="card-title m-0">Categories</h2>
+              </span>
+              <span class="flex-grow-1">
+                  <div class="display-sm-block d-flex align-items-center justify-content-end">
+                      <a href="javascript:void(0)" class="btn btn-primary add-series-btn m-0" data-toggle="modal" data-target="#add-modal">Add Categorie</a>
+                  </div>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead class=" text-primary">
+                <th>#</th>
+                <th>Category</th>
+                <th>Created At</th>
+                <th>Action</th>
+                </thead>
+                <tbody>
+                <tr *ngFor="let val of getList; let i = index">
+                  <td>{{i + serialNumber + 1}}</td>
+                  <td>{{val.categoryName}}</td>
+                  <td>{{val.createdAt | date:'yyyy-MM-dd hh:mm a'}}</td>
+                  <td><button class="btn btn-primary"  data-toggle="modal" data-target="#update-modal" (click)="editData(val, i)"><i class="material-icons">edit</i></button></td>
+                </tr>  
+                </tbody>
+              </table>
+              <pagination *ngIf="getList.length" [boundaryLinks]="showBoundaryLinks" [totalItems]="totalCount" [(ngModel)]="bigCurrentPage"  [maxSize]="maxSize"  (pageChanged)="pageChanged($event)"></pagination>
+                 <div *ngIf="!getList.length" class="text-center">
+                <h4>No Records found.</h4>
+              </div>    
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ <div id="add-modal" class="modal fade" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add Category</h3>
+        </div>
+        <form autocomplete="off" #addForm="ngForm" (submit)="addData()">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12 col-xl-12">
+                <div class="form-group">
+                  <label for="">Category</label>
+                  <input type="text" name="categoryName" [(ngModel)]="categoryName" class="form-control" required>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" type="submit"> {{flags.isSubmitted?'Saving....':'Save'}}</button>
+            <button type="button" class="btn btn-default" id="close-add-modal" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> 
+
+    <div id="update-modal" class="modal fade" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Update</h3>
+            </div>
+            <form autocomplete="off" #updateForm="ngForm" (submit)="updateData()">
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-12 col-xl-12">
+                    <div class="form-group">
+                      <label for="">Category</label>
+                      <input type="text"  name="categoryNameU"  [(ngModel)]="categoryNameU" class="form-control" required>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-primary" [disabled]="!updateForm.valid || flags.isSubmitted" type="submit"> {{flags.isSubmitted?'Updating..':'Update'}}</button>
+                    <button type="button" class="btn btn-default" id="close-update-modal" data-dismiss="modal">Close</button>
+                  </div>
+                  </div>
+            </form>
+          </div>
+        </div>
+      </div> 
+
+
+
+   

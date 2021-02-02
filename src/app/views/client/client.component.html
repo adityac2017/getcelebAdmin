@@ -1,0 +1,487 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <div class="row d-flex display-sm-block align-items-center justify-content-between">
+              <span>
+                <h2 class="card-title m-0">All Clients</h2>
+              </span>
+              <span class="flex-grow-1">
+                  <div class="display-sm-block d-flex align-items-center justify-content-end">
+                      <input type="text"   placeholder="Search Email.." [(ngModel)]="getUserBody.searchText" class="form-control custom-search" (keyup)="search()">
+                      <a href="javascript:void(0)" class="btn btn-primary add-series-btn m-0" data-toggle="modal" data-target="#add-modal">Add Client</a>
+                  </div>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead class=" text-primary">
+                <th>#</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Client Type</th>
+                <th>Instagram Id</th>
+                <th>Category</th>
+                <th>Video Price</th>
+                <th>Profile Image</th>
+                <th>Intro Video</th>
+                <th>Description</th>
+                <th>Title</th>
+                <th>Tag</th>
+                <th>Created At</th>
+                <th>Action</th>
+                </thead>
+                <tbody>
+                <tr *ngFor="let val of getList; let i = index">
+                  <td>{{i + serialNumber + 1}}</td>
+                  <td>{{val.clientEmail}}</td>
+                  <td>{{val.clientName}}</td>
+                  <td>{{val.clientPhone}}</td>
+                  <td>{{val.campaignType}}</td>
+                  <td>{{val.instagramId}}</td>
+                  <td>{{val.categoryId?val.categoryId.categoryName:''}}</td>
+                  <td>{{val.vedioPrice}}</td>
+                  <td><a href="javascript:void(0)" (click)="selectImage(val.profileImage,2)"><img *ngIf="val.profileImage" src="{{imageUrl}}{{val.profileImage}}" height="80px" width="80px" class=""></a>
+                   <img *ngIf="!val.profileImage" src="assets/img/default.png" height="80px" width="80px" class="">
+                  </td>
+                  <!-- <td>
+                  <span *ngIf="val.vedio.length > 0">
+                    <video *ngIf="val.vedio[0]['bookingFor'] == 2 && val.vedio[0]['bookingStatus'] == 3" width="200" controls>
+                     <source  src="{{imageUrl}}{{val.vedio[0]['vedio']}}" type="video/mp4">
+                    </video>
+                  </span>
+                  <img *ngIf="!val.vedio.length == 0 || !val.vedio.length" src="assets/img/Group17052x.png" height="100px" width="100px">
+                  </td> -->
+                  <td>
+                    <span *ngIf="val.introVedio">
+                      <video *ngIf="val.introVedio" width="200" controls>
+                       <source  src="{{imageUrl}}{{val.introVedio}}" >
+                      </video>
+                    </span>
+                    <img *ngIf="!val.introVedio" src="assets/img/Group17052x.png" height="100px" width="100px">
+                    </td>
+                  <td>{{val.description}}</td>
+                  <td>{{val.title}}</td>
+                  <td><span *ngFor="let tag of val.tag; let i = index">#{{tag}}<br></span>
+                  </td>
+                  <td>{{val.createdAt | date:'yyyy-MM-dd hh:mm a'}}</td>
+                  <td><button class="btn btn-primary"  data-toggle="modal" data-target="#update-modal" (click)="editData(val, i)"><i class="material-icons">edit</i></button>
+                  <button  class="btn btn-primary"  routerLink="/clientVedios/{{val._id}}"><i class="material-icons">View Videos</i></button>
+                  <button *ngIf="val.isBlocked == 0"  class="btn btn-danger"  onclick="return confirm('Are you sure you want to block this client ?');" (click)="blockUnblocks(val._id,i,1)"><i class="material-icons">Unblock</i></button>
+                  <button *ngIf="val.isBlocked == 1"  class="btn btn-danger"  onclick="return confirm('Are you sure you want to Unblock this client ?');" (click)="blockUnblocks(val._id,i,0)"><i class="material-icons">Block</i></button></td>
+                </tr>  
+                </tbody>
+              </table>
+              <pagination *ngIf="getList.length" [boundaryLinks]="showBoundaryLinks" [totalItems]="totalCount" [(ngModel)]="bigCurrentPage"  [maxSize]="maxSize"  (pageChanged)="pageChanged($event)"></pagination>
+                 <div *ngIf="!getList.length" class="text-center">
+                <h4>No Records found.</h4>
+              </div>    
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ <div id="add-modal" class="modal fade" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add Client</h3>
+        </div>
+        <form autocomplete="off"  #addForm="ngForm" (submit)="addData()">
+        <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12 col-xl-12">
+                      <div class="form-group">
+                        <label for="">Email</label>
+                        <input type="email"  name="clientEmail" [(ngModel)]="addBody.clientEmail" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Password</label>
+                        <input type="password" name="clientPassword" [(ngModel)]="addBody.clientPassword" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Name</label>
+                        <input type="text" name="clientName" [(ngModel)]="addBody.clientName" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Phone</label>
+                        <input type="text"   name="clientPhone" [(ngModel)]="addBody.clientPhone" class="form-control enterNumber" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Instagram Id</label>
+                        <input type="text" name="instagramId" [(ngModel)]="addBody.instagramId" class="form-control" required>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="">Client Category</label>
+                        <select  name="categoryId" [(ngModel)]="addBody.categoryId" class="form-control">
+                          <option selected disabled>Select Type</option>
+                          <option *ngFor="let val of getListCategory;let i = index;" value="{{val._id}}">{{val.categoryName}}</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Client Type</label>
+                        <!-- <input type="text"  name="campaignType" [(ngModel)]="addBody.campaignType" class="form-control enterNumber" required> -->
+                        <select  name="campaignType" (change)="campaignTypeAdd($event.target.value)" class="form-control">
+                          <option selected disabled>Select Type</option>
+                          <option value="0">0</option>
+                          <option value="1">1</option>
+                        </select>
+                      </div>
+                      
+                      <div class="form-group" *ngIf="addBody.campaignType == 1">
+                        <label for="">NGO Image</label>
+                        <input type="file" name="profileImage" class="form-control" accept="image/x-png,image/gif,image/jpeg,image/jpg" (change)="selectFile($event)"/><br>
+                        <span *ngIf="src">   <img [src]="src" width="80px" height="80px"></span>
+                      </div>  
+
+                      <div class="form-group" *ngIf="addBody.campaignType == 1">
+                        <label for="">NGO Description</label>
+                        <textarea cols="10" class="form-control"   name="campaignDesc" rows="6" [(ngModel)]="addBody.campaignDesc" ></textarea>
+                      </div>
+                      <div class="form-group dateNGOAdd"  style="display: none;">
+                        <label for="">NGO Date</label>
+                        <input type="text" name="datetimesAdd" class="w-100 datetym"  #dateNGOAdd [(ngModel)]="addBody.campaignTime">
+                      </div>
+                      
+
+                      <div class="form-group">
+                        <label for="">Vedio Price</label>
+                        <input type="text"  name="vedioPrice" [(ngModel)]="addBody.vedioPrice" class="form-control enterNumber" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Description</label>
+                        <textarea cols="10" class="form-control"   name="description" rows="6" [(ngModel)]="addBody.description" ></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Title</label>
+                        <input type="text" name="title" [(ngModel)]="addBody.title" class="form-control" required>
+                      </div>
+                 
+                      <!-- <div class="form-group">
+                        <label for="">Tag</label>
+                        <input type="text" name="tag" [(ngModel)]="addBody.tag" class="form-control" required>
+                      </div> -->
+                      <div class="form-group">
+                          <label for="">Tags</label>
+                          <div class="row">
+                            <div class="col-md-8">
+                              <input type="text" class="form-control" name="enterTag" [(ngModel)] = "enterTag"  >
+                            </div>
+                            <div class="col-md-4">
+                              <a  href="Javascript:void(0);" class="btn btn-primary" (click)="enterData()" >+ Add Tag </a>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                              <div class="col-md-8">
+                                  <ul class="p-0 list-unstyled">
+                                    <li *ngFor="let d of tagsEnterData1; let i=index;">
+                                      #{{d}}
+                                      <a href="Javascript:void(0);" class="btn btn-primary" (click)="removeData(i)" >- Remove Tag </a>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </div>
+                          </div>
+
+
+                      <div class="form-group">
+                        <label for="">Profile Image</label>
+                        <input type="file" name="profileImage" class="form-control" accept="image/x-png,image/gif,image/jpeg,image/jpg" (change)="selectFile($event)"/><br>
+                        <span *ngIf="src">   <img [src]="src" width="80px" height="80px"></span>
+                      </div>  
+                      <div class="form-group">
+                        <label for="">Video</label>
+                        <input type="file" name="introVedio"  accept="video/mp4,video/x-m4v,video/*"  (change)="selectVideo($event)" class="form-control" >
+                      </div>                               
+              </div>
+            </div>
+          <h2 style='color: Red'>{{message}}</h2>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary" [disabled]="!addForm.valid || flags.isSubmitted" type="submit" > {{flags.isSubmitted?'Saving....':'Save'}}</button> -->
+          <button type="button" class="btn btn-primary"  type="submit" > {{flags.isSubmitted?'Saving....':'Save'}}</button>
+          <button type="button" class="btn btn-default" id="close-add-modal" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div> 
+
+
+
+
+    <div id="update-modal" class="modal fade" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Update Client</h3>
+            </div>
+            <form autocomplete="off" #updateForm="ngForm" (submit)="updateData()">
+            <div class="modal-body">
+             
+                <div class="row">
+                  <div class="col-md-12 col-xl-12">
+                          <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="text" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="clientEmail" [(ngModel)]="updateBody.clientEmail" class="form-control" required>
+                          </div>
+                          <!-- <div class="form-group">
+                            <label for="">Password</label>
+                            <input type="password" name="clientPassword" [(ngModel)]="updateBody.clientPassword" class="form-control" >
+                          </div> -->
+                          <div class="form-group">
+                            <label for="">Name</label>
+                            <input type="text" name="clientName" [(ngModel)]="updateBody.clientName" class="form-control" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Phone</label>
+                            <input type="text"  name="clientPhone" [(ngModel)]="updateBody.clientPhone" class="form-control enterNumber" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Instagram Id</label>
+                            <input type="text" name="instagramId" [(ngModel)]="updateBody.instagramId" class="form-control" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Client Category</label>
+                            <select  name="categoryId" [(ngModel)]="updateBody.categoryId" class="form-control">
+                              <option *ngFor="let val of getListCategory;let i = index;" value="{{val._id}}">{{val.categoryName}}</option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Client Type</label>
+                            <select name="campaignType" (change)="campaignTypeUpdate($event.target.value)" class="form-control">
+                              <option [selected]="updateBody.campaignType == 0" value="0">0</option>
+                              <option [selected]="updateBody.campaignType == 1" value="1">1</option>
+                            </select>
+                          </div>
+                          
+                          <div class="form-group" *ngIf="updateBody.campaignType == 1">
+                            <label for="">NGO Image</label>
+                            <input type="file" name="profileImage" class="form-control" accept="image/x-png,image/gif,image/jpeg,image/jpg" (change)="selectFileNgo($event)"/><br>
+                            <img *ngIf="updateBody.campaignImage && !src1" height="80px" width="80px" src="{{imageUrl}}{{updateBody.campaignImage}}"> 
+                            <img *ngIf="!updateBody.campaignImage && !src1" src="assets/img/default.png" height="80px" width="80px" class="">
+                            <span *ngIf="src1">   <img [src]="src1" width="80px" height="80px"></span>
+                          </div>  
+    
+                          <div class="form-group" *ngIf="updateBody.campaignType == 1">
+                            <label for="">NGO Description</label>
+                            <textarea cols="10" class="form-control"   name="campaignDesc" rows="6" [(ngModel)]="updateBody.campaignDesc" ></textarea>
+                          </div>
+                          <div class="form-group dateNGOUpdate"  style="display: none;" >
+                            <label for="">NGO Date</label>
+                            <!-- <input type="text"  name="campaignTime" [(ngModel)]="updateBody.campaignTime" class="form-control" required> -->
+                            <input type="text" name="datetimes" class="w-100 datetym"  #dateNGO [(ngModel)]="updateBody.campaignTime">
+                          </div>
+                         
+
+                          <div class="form-group">
+                            <label for="">Vedio Price</label>
+                            <input type="text" name="vedioPrice" [(ngModel)]="updateBody.vedioPrice" class="form-control enterNumber" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Description</label>
+                            <textarea cols="10" class="form-control"   name="description" rows="6" [(ngModel)]="updateBody.description" ></textarea>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Title</label>
+                            <input type="text" name="title" [(ngModel)]="updateBody.title" class="form-control" required>
+                          </div>
+                       
+                          <!-- <div class="form-group">
+                            <label for="">Tag</label>
+                            <input type="text" name="tag" [(ngModel)]="updateBody.tag" class="form-control" required>
+                          </div> -->
+                          <div class="form-group">
+                              <label for="">Tags</label>
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <input type="text" class="form-control" name="enterTag" [(ngModel)] = "enterTag"  >
+                                </div>
+                                <div class="col-md-4">
+                                  <a  href="Javascript:void(0);" class="btn btn-primary" (click)="enterData()" >+ Add Tag </a>
+                                </div>
+                              </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <div class="row">
+                                  <div class="col-md-8">
+                                      <ul class="p-0 list-unstyled">
+                                          <!-- <li *ngFor="let c of updateBody.tag; let i=index;">
+                                          #{{c}}
+                                          <a href="Javascript:void(0);" class="btn btn-primary" (click)="removeData(i)" >- Remove Tag </a>
+                                        </li> -->
+                                        <li *ngFor="let d of tagsEnterData1; let i=index;">
+                                          #{{d}}
+                                          <a href="Javascript:void(0);" class="btn btn-primary" (click)="removeData(i)" >- Remove Tag </a>
+                                        </li>
+                                      </ul>
+                                  </div>
+                                </div>
+                              </div>
+                          <div class="form-group">
+                            <label for="">Profile Image</label>
+                            <!-- <input type="file" name="profileImage" [(ngModel)]="updateBody.profileImage" accept="image/png,image/jpeg,image/jpg,image/gif" class="form-control" required> -->
+                            <input type="file" name="profileImage" class="form-control" accept="image/x-png,image/gif,image/jpeg,image/jpg" (change)="selectFile($event)"/><br>
+                           <img *ngIf="profileImage" height="80px" width="80px" src="{{imageUrl}}{{profileImage}}"> 
+                            <img *ngIf="!profileImage" src="assets/img/default.png" height="80px" width="80px" class="">
+                            <span *ngIf="src">   <img [src]="src" width="80px" height="80px"></span>
+                          </div>  
+                          <div class="form-group">
+                            <label for="">Video</label>
+                            <input type="file" name="introVedio"  accept="video/mp4,video/x-m4v,video/*"  (change)="selectVideo($event)" class="form-control" >
+                            <video *ngIf="introVedioUpdate" width="200" controls>
+                              <source  src="{{imageUrl}}{{introVedioUpdate}}" type="video/mp4">
+                            
+                            </video>
+                            <img *ngIf="!introVedioUpdate" src="assets/img/Group17052x.png" height="100px" width="100px">
+                          </div>                               
+                  </div>
+                </div>
+              
+              <h2 style='color: Red'>{{message}}</h2>
+
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" [disabled]="!updateForm.valid || flags.isSubmitted" type="submit" > {{flags.isSubmitted?'Updating..':'Update'}}</button> 
+              <button type="button" class="btn btn-default" id="close-update-modal" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div> 
+
+
+
+    <div id="view-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>View Details</h3>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="">Name</label>
+                    <input type="text" name="name" readonly [(ngModel)]="viewBody.name" class="form-control" required>
+                
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="">Phone Number</label>
+                    <input type="number" name="phoneNumber" readonly [(ngModel)]="viewBody.phoneNumber" class="form-control" required>
+                 
+                  </div>
+                </div>
+              </div>
+            
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="">Gender</label>
+                    <input type="text" name="gender" readonly [(ngModel)]="viewBody.gender" class="form-control" required>
+                 
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="">Age</label>
+                    <input type="text" name="age" readonly [(ngModel)]="viewBody.age" class="form-control" required>
+                
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="">D.O.B</label>
+                    <input type="text" name="dob" readonly [(ngModel)]="viewBody.dob" class="form-control" required>
+                 
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="">Height</label>
+                    <input type="text" name="height" readonly [(ngModel)]="viewBody.height" class="form-control" required>
+                
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="">Postal Code</label>
+                    <input type="text" name="postalCode" readonly [(ngModel)]="viewBody.postalCode" class="form-control" required>
+                
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="">Score Credits</label>
+                    <input type="text" name="scoreCredits" readonly [(ngModel)]="viewBody.scoreCredits" class="form-control" required>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default"  data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div> 
+  
+
+       <!-- <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <h4>Are you sure you want to delete this Record ?</h4>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" (click)="deleteData()">Delete</button>
+              <button type="button" class="btn btn-default" id="close-delete-modal" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+
+
+      <!-- Modal -->
+      <div class="modal fade" id="imageModel" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Profile Image</h4>
+            </div>
+            <div class="modal-body">
+             <img height="100%" width="100%" src="{{profileImage}}">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>

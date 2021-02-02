@@ -1,0 +1,48 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <div class="row">
+              <div class="col-md-6">
+                <h2 class="card-title ">Client Videos</h2>
+              </div>
+              <div class="col-md-6">
+                <div class="pull-right mt-3 rightadd">
+       
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead class=" text-primary">
+                <th>#</th>
+                <th>Videos</th>
+                <th>Action</th>
+                </thead>
+                <tbody>
+                <tr *ngFor="let val of getList; let i = index">
+                  <td>{{i + serialNumber + 1}}</td>
+                  <td>
+                    <video *ngIf="val.vedio" width="500" controls>
+                      <source  src="{{imageUrl}}{{val.vedio}}" type="video/mp4">
+                    </video>
+                  </td>
+                  <td><button  class="btn btn-primary" onclick="return confirm('Are you sure you want to delete this video ?');" (click)="deleteVideo(val._id,i)"><i class="material-icons">Delete</i></button></td>
+                </tr>  
+                </tbody>
+              </table>
+              <pagination *ngIf="getList.length" [boundaryLinks]="showBoundaryLinks" [totalItems]="totalCount" [(ngModel)]="bigCurrentPage"  [maxSize]="maxSize"  (pageChanged)="pageChanged($event)"></pagination>
+                 <div *ngIf="!getList.length" class="text-center">
+                <h4>No Records found.</h4>
+              </div>    
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

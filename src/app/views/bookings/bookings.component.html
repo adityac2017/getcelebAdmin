@@ -1,0 +1,105 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-danger">
+              <div class="row">
+                <div class="col-md-6">
+                  <h2 class="card-title ">All Bookings</h2>
+                </div>
+                <div class="col-md-6">
+                  <div class="pull-right mt-3 rightadd">
+                    <!-- <a href="javascript:void(0)" class="add-series-btn" data-toggle="modal" data-target="#confirmModal"><i class="material-icons"></i>&nbsp;Add Client</a> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead class=" text-primary">
+                  <th>#</th>
+                  <th>Booking Amount</th>
+                  <th>Description</th>
+                  <th>Name</th>
+                  <th>User Email</th>
+                  <th>Client Name</th>
+                  <th>Booking Status</th>
+                  <th>Paytm Order Id</th>
+                  <th>Paytm Txn Id</th>
+                  <th>Video</th>
+                  <th>Created At</th>
+                  <th>Action</th>
+                  <th>Upload</th>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let val of getList; let i = index">
+                    <td>{{i + serialNumber + 1}}</td>
+                    <td>{{val.bookingAmount}}</td>
+                    <td>{{val.description}}</td>
+                    <td>{{val.myName}}</td>
+                    <td>{{val.userId?val.userId.userEmail:''}}</td>
+                    <td>{{val.clientId.clientName}}</td>
+                    <td><span *ngIf="val.bookingStatus == 0">Pending</span>
+                      <span *ngIf="val.bookingStatus == 1">Accepted</span>
+                      <span *ngIf="val.bookingStatus == 2">Rejected</span>
+                      <span *ngIf="val.bookingStatus == 3">Completed</span></td>
+                    <td>{{val.paytmOrderId}}</td>
+                    <td>{{val.paytmTxnId}}</td>
+                    <td><video *ngIf="val.vedio" width="200" controls>
+                        <source  src="{{imageUrl}}{{val.vedio}}" type="video/mp4">
+                      </video>
+                      <img *ngIf="!val.vedio" src="assets/img/Group17052x.png" height="100px" width="100px">
+                    </td>
+                    <td>{{val.createdAt | date:'yyyy-MM-dd hh:mm a'}}</td>
+                    <td><button *ngIf="val.amountPaidToClient == '0' && val.bookingStatus == 0" class="btn btn-primary" data-toggle="modal" data-target="#confirmModal" (click)="confirmPay(val._id,i,1)"><i class="material-icons">Pay</i></button> 
+                      <button *ngIf="val.amountPaidToClient == '0' && val.bookingStatus == 1" class="btn btn-primary" data-toggle="modal" data-target="#confirmModal" (click)="confirmPay(val._id,i,1)"><i class="material-icons">Pay</i></button> 
+                      <button *ngIf="val.amountPaidToClient == '0' && val.bookingStatus == 2" class="btn btn-primary" data-toggle="modal" data-target="#confirmModal" (click)="confirmPay(val._id,i,1)"><i class="material-icons">Pay</i></button> 
+                      <button *ngIf="val.amountPaidToClient == '1'" class="btn btn-primary"  ><i class="material-icons">Paid</i></button>
+                    </td>
+                    <td><button  class="btn btn-primary"   data-toggle="modal" data-target="#uploadVideo"  (click)="uploadButton(val._id,i)"><i class="material-icons">Upload</i></button></td>
+                  </tr>  
+                  </tbody>
+                </table>
+                <pagination *ngIf="getList.length" [boundaryLinks]="showBoundaryLinks" [totalItems]="totalCount" [(ngModel)]="bigCurrentPage"  [maxSize]="maxSize"  (pageChanged)="pageChanged($event)"></pagination>
+                   <div *ngIf="!getList.length" class="text-center">
+                  <h4>No Records found.</h4>
+                </div>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+      <div id="confirmModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <h4>Client have not completed task yet. Are you sure you want to transfer payment.</h4>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" (click)="payToClient()">Send</button>
+              <button type="button" class="btn btn-default" id="closeConfirmModal" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="uploadVideo" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <input type="file" name="introVedio"  class="form-control" accept="video/mp4,video/x-m4v,video/*"  (change)="selectVideo($event)">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" (click)="uploadVideo()">Upload</button>
+              <button type="button" class="btn btn-default" id="closeConfirmModalVideo" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
